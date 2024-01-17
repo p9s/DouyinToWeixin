@@ -115,5 +115,5 @@ if __name__ == '__main__':
         loop_function()
         time.sleep(60)
 
-        if int(time.time()) - start_time >= 3600:
+        if (int(time.time()) - start_time) % 3000 <= 60:
             tab_weixin.refresh()
