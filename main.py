@@ -1,7 +1,11 @@
-
+import datetime
 import time
 import os
 from DrissionPage import ChromiumPage, ChromiumOptions
+
+
+def print_msg(msg):
+    print(f'[{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {msg}')
 
 
 def init_page_and_tabs():
@@ -33,7 +37,7 @@ def init_page_and_tabs():
 
 
 def post_video(aweme_id, desc):
-    print('正在上传视频：' + aweme_id + '.mp4')
+    print_msg('正在上传视频：' + aweme_id + '.mp4')
     tab_weixin.get('https://channels.weixin.qq.com/platform')
     tab_weixin.wait(5)
     tab_weixin('tag:button@text()=发表视频').click()
@@ -52,14 +56,13 @@ def post_video(aweme_id, desc):
     # tab_weixin.wait(2)
     # tab_weixin('x:/html/body/div[1]/div/div[2]/div[2]/div/div/div[1]/div[3]/div/div[2]/div[2]/div[9]/div[3]/div[1]/div/div[3]/div[2]').click()
     # tab_weixin.wait(2)
-    tab_weixin.wait.ele_displayed(
-        'x:/html/body/div[1]/div/div[2]/div[2]/div/div/div[1]/div[3]/div/div[2]/div[1]/div[2]/div/div[2]/div/span/div/div/div')
+    tab_weixin.wait.ele_displayed('x:/html/body/div[1]/div/div[2]/div[2]/div/div/div[1]/div[3]/div/div[2]/div[1]/div[2]/div/div[2]/div/span/div/div/div')
     tab_weixin.wait(2)
     tab_weixin.scroll.to_bottom()
     tab_weixin.wait(2)
-    tab_weixin('x:/html/body/div[1]/div/div[2]/div[2]/div/div/div[1]/div[3]/div/div[2]/div[2]/div[10]/div[5]/span/div/button').click()
+    tab_weixin('tag:button@text()=发表').click()
     tab_weixin.wait(2)
-    print(aweme_id + '.mp4' + "上传成功")
+    print_msg(aweme_id + '.mp4' + "上传成功")
 
 
 def loop_function():
@@ -82,22 +85,22 @@ def loop_function():
                             video_url = dic['video']['play_addr']['url_list'][0]
                             path = os.path.join(os.getcwd(), "video")
                             d_r = tab_douyin.download(file_url=video_url, rename=aweme_id, suffix='mp4', goal_path=path,
-                                                file_exists='overwrite')
+                                                      file_exists='overwrite')
                             if d_r[0] == 'success':
                                 # 调用发布函数
                                 desc = dic['desc']
                                 post_video(aweme_id, desc)
                                 posted_list.append(aweme_id)
                             else:
-                                print('下载视频失败')
+                                print_msg('下载视频失败')
                 except KeyError:
-                    print("The key 'aweme_list' does not exist in the dictionary")
+                    print_msg("The key 'aweme_list' does not exist in the dictionary")
             else:
-                print("The response body is not a dictionary")
+                print_msg("The response body is not a dictionary")
         else:
-            print("Failed to get response")
+            print_msg("Failed to get response")
     else:
-        print("Waited for 30 seconds but no response was received")
+        print_msg("Waited for 30 seconds but no response was received")
 
 
 # Press the green button in the gutter to run the script.
@@ -110,7 +113,7 @@ if __name__ == '__main__':
 
     index = 1
     while True:
-        print(f'第{index}次检查~')
+        print_msg(f'第{index}次检查~')
         index += 1
         loop_function()
         time.sleep(60)
